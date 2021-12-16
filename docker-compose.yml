@@ -1,7 +1,7 @@
 version: "3.9"
 
 services: # Servicios
-  frontend: # Nombre del servicio
+  backend: # Nombre del servicio
     image: node:17-alpine3.12
     command: ["npm", "run", "dev"]
     working_dir: /app
@@ -13,6 +13,28 @@ services: # Servicios
       PORT: "${PORT}"
     ports:
       - "5000:${PORT}"
+    networks:
+      - devnetwork
+  database:
+    image: mariadb:10.3
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: sample
+    networks:
+      - devnetwork
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8085:80
+    environment:
+      - PMA_HOST=database
+      - PMA_ARBITRARY=1
+    networks:
+      - devnetwork
 
 volumes: # Volumenes que necesito
   myapp:
+
+networks:
+  devnetwork:
